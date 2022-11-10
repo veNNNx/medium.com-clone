@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+
+{% block title %} #{{tag}} articles {% endblock %}
+
+{% block content %}
+
+<h1 style="text-align:center;">Articles with #{{tag}}</h1>
+
+
+<main class="container">
+  {% for article in articles %}
+    <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+      <div class="col p-3 d-flex flex-column position-static">
+      <strong class="d-inline-block mb-10 text-success">{% for tag in article.tags.all %}#{{ tag }} {% endfor %}</strong>   
+        <h3 class="mb-0">{{article.title}}</h3>
+        <h5 class="mb-1">{{article.author.first_name}} {{article.author.last_name}}</h5>
+        <div class="mb-1 text-muted">{{article.created}}</div>
+        <p class="cut_text">{{article.text}}</p>
+        <a href='/article/{{article.id}}' class="stretched-link">Continue reading</a>
+      </div>
+      <div class="col-auto d-none d-lg-block">
+        {% if article.img%}
+          <img id="home_img" src="{{ article.img.url}}">
+        {% endif %}
+      </div>
+    </div>
+  {% endfor %}
+</div>
+</main>
+
+{% endblock %}

@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% load embed_video_tags %}
+{% block title %} Article {% endblock %}
+
+
+
+{% block content %} 
+<script src="https://use.fontawesome.com/fe459689b4.js"></script>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-success alert-dismissible" role="alert">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif%}
+
+<main class="container">
+<div class="row g-0 border rounded  flex-md-row mb-4 shadow-sm  position-flex">
+    <div class="col p-3 d-flex flex-column position-static">
+        <h2 class="blog-post-title">{{article.title}}</h2>
+        {% if article.img%}
+        <img id="article_img" src="{{ article.img.url}}">
+        {% endif %}
+        <p class="blog-post-meta">{{article.created}} by 
+            <a href="/profile/{{article.author.id}}"> {{article.author.first_name}} {{article.author.last_name}}</a>
+        </p>
+        <div class="box">{{article.text}}</div>
+        <div style="margin: auto;">{%video article.video '640x480'%}</div>
+        <strong class="d-inline-block mb-10 text-success">{% for tag in article.tags.all %}#{{ tag }} {% endfor %}</strong> 
+    </div>
+</div>
+</main>
+
+{% for comment in comments%}
+<main class="container">
+    <div class="row g-0 border rounded  flex-md-row mb-4 shadow-sm  position-flex">
+        <div class="col p-3 d-flex flex-column position-static">
+            <div class="box">{{comment.text}}</div>
+                <p class="blog-comment">
+                    {{comment.created}} by {{comment.author.first_name}} {{comment.author.last_name}}
+                </p>
+                <div>
+                    <span style="float:right;">
+                        {% if user == comment.author %}
+                        <form action = "/delete/comment/" method = "POST">
+                            {% csrf_token %}
+                            <input type="hidden" name="comment_id" value="{{ comment.id }}"/>
+                            <input type="hidden" name="article_id" value="{{ article.id }}"/>
+                            <button style="background-color: #f44336;">Delete</button>
+                        </form>
+                        {% endif %}
+                    </span>
+                    <span style="float:left;">
+                        {% if user.is_authenticated %}
+                        <form action = "/like/comment/" method = "POST">
+                            {% csrf_token %}
+                            <input type="hidden" name="comment_id" value="{{ comment.id }}"/>
+                            <input type="hidden" name="article_id" value="{{ article.id }}"/>
+                                {% if user in comment.likes.all%}
+                                <button class="btn" style="color: green;" ><i class="fa fa-thumbs-up fa-lg" aria-hidden="true">{{comment.likes.all.count}}</i></button>
+                                {% else %}
+                                <button class="btn" style="color: grey;" ><i class="fa fa-thumbs-up fa-lg" aria-hidden="true">{{comment.likes.all.count}}</i></button>
+                                {% endif %}
+                        </form>
+                        {% else %}
+                            <button class="btn-disabled" style="color:green;" ><i class="fa fa-thumbs-up fa-lg" aria-hidden="true">{{comment.likes.all.count}}</i></button>
+                        {% endif %}
+                    </span>
+                    <span style="float:left;">
+                        {% if user.is_authenticated %}
+                            <form action = "/dislike/comment/" method = "POST">
+                                {% csrf_token %}
+                                <input type="hidden" name="comment_id" value="{{ comment.id }}"/>
+                                <input type="hidden" name="article_id" value="{{ article.id }}"/>
+                                {% if user in comment.dislikes.all%}
+                                <button class="btn" style="color:red"><i class="fa fa-thumbs-down fa-lg" aria-hidden="true">{{comment.dislikes.all.count}}</i></button>
+                                {% else %}
+                                <button class="btn" style="color:grey"><i class="fa fa-thumbs-down fa-lg" aria-hidden="true">{{comment.dislikes.all.count}}</i></button>
+                                {% endif %}
+                            </form>
+                        {% else %}
+                            <button class="btn-disabled" style="color:red;" ><i class="fa fa-thumbs-down fa-lg" aria-hidden="true">{{comment.dislikes.all.count}}</i></button>
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{%endfor%}
+
+
+{% if user.is_authenticated %}
+<form method="POST">
+    {% csrf_token %}
+<main class="container">
+    <div class="row g-0 border rounded  flex-md-row mb-4 shadow-sm  position-flex">
+        <div class="col p-3 d-flex flex-column position-static">
+            <div class="form-group">
+                <input type="text" class="form-control" name="text" placeholder="Add comment">
+            </div>
+        </div>
+    </div>
+</main>
+</form>
+{% endif %}
+
+{% endblock %}

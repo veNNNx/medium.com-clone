@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block title %} Profile {% endblock %}
+{% block content %}
+
+
+<h1 style="text-align:center;">{%if user == request.user %}My {% else %} {{user.first_name}} {{user.last_name}} {%endif%}activity</h1>
+
+
+
+
+
+
+{% if articles %}
+<h3 style="text-align:center;">Articles:</h3>
+    <main class="container">
+        {% for article in articles%}
+        <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+            <div class="col p-3 d-flex flex-column position-static">
+            <strong class="d-inline-block mb-10 text-success">{% for tag in article.tags.all %}#{{ tag }} {% endfor %}</strong>   
+            <h3 class="mb-0">{{article.title}}</h3>
+            <h5 class="mb-1">{{article.author.first_name}} {{article.author.last_name}}</h5>
+            <div class="mb-1 text-muted">{{article.created}}</div>
+            <p class="cut_text">{{article.text}}</p>
+            <a href='/article/{{article.id}}' class="stretched-link">Continue reading</a>
+            </div>
+            <div class="col-auto d-none d-lg-block">
+            {% if article.img%}
+                <img id="home_img" src="{{ article.img.url}}">
+            {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    </main>
+{%endif%}
+
+
+{% if comments %}
+<h3 style="text-align:center;">Commented articles:</h3>
+<main class="container">
+    {% for comment in comments%}
+    <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+        <div class="col p-3 d-flex flex-column position-static">
+        <strong class="d-inline-block mb-10 text-success">{% for tag in comment.article.tags.all %}#{{ tag }} {% endfor %}</strong>   
+        <h3 class="mb-0">{{comment.article.title}}</h3>
+        <h5 class="mb-1">{{comment.article.author.first_name}} {{comment.article.author.last_name}}</h5>
+        <div class="mb-1 text-muted">{{comment.article.created}}</div>
+        <p class="cut_text">{{comment.article.text}}</p>
+        <a href='/article/{{comment.article.id}}' class="stretched-link"></a>
+        </div>
+        <div class="col-auto d-none d-lg-block">
+        {% if comment.article.img%}
+            <img id="home_img" src="{{ comment.article.img.url}}">
+        {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+</main>
+{%endif%}
+
+{% endblock %}

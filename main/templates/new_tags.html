@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+
+{% block title %} Trending tags {% endblock %}
+
+{% block content %}
+
+<main class="container">
+  {% for tag in page_obj %}
+    <div class="col  d-flex flex-column position-static">
+        <strong class="d-inline-block mb-10 text-success"><a href="by_tag/{{tag}}">#{{ tag }}</a></strong>   
+    </div>
+  {% endfor %}
+
+
+</main>
+<div class="pagination justify-content-center" >
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">next</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+
+{% endblock %}
